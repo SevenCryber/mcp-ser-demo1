@@ -14,7 +14,7 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 # 1. 创建 MCP 实例
-mcp = FastMCP("weather-demo")
+mcp = FastMCP(name="weather", host="0.0.0.0", port=8000)
 
 # 2. 工具：天气查询（mock）
 @mcp.tool()
@@ -26,6 +26,15 @@ async def get_weather(city: str) -> str:
         "guangzhou":"小雨，20℃"
     }
     return fake_db.get(city.lower(), "未收录该城市")
+
+@mcp.tool()
+async def get_arguments(arguments: dict) -> str:
+    """创建商单任务"""
+    if arguments is None:
+        return "missing arguments"
+    # 这里随便做什么
+    print(f"received payload: {arguments}")
+    return f"received payload: {arguments}"
 
 # 3. 资源：城市列表
 @mcp.resource("weather://cities")
@@ -46,8 +55,6 @@ def travel_guide(city: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8001)
     args = parser.parse_args()
 
     if args.transport == "sse":

@@ -10,4 +10,4 @@ Command填写 python
 Arguments填写 weather_server.py
 
 SSE模式
-python weather_server.py --transport sse --host 0.0.0.0 --port 8000
+python weather_server.py --transport sse
