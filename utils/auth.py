@@ -1,6 +1,5 @@
 import httpx
 from cachetools import TTLCache
-from auth.base import AuthBase
 from settings import settings
 import asyncio
 from utils.logger import get_logger
@@ -15,8 +14,7 @@ class Auth:
     async def get_token(self, user_id: str) -> str:
         if user_id in self._cache:
             return self._cache[user_id]
-        key = f"{user_id}"
-        lock = self._locks.setdefault(key, asyncio.Lock())
+        lock = self._locks.setdefault(user_id, asyncio.Lock())
         async with lock:
             if user_id in self._cache:
                 return self._cache[user_id]
@@ -42,3 +40,4 @@ class Auth:
             self._cache[user_id] = token
             logger.info("[user:%s] token obtained and cached", user_id)
             return token
+auth = Auth()
